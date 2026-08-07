@@ -4,18 +4,19 @@ from dotenv import load_dotenv
 from groq import Groq
 import streamlit as st
 
-# 1. Page Config (Must be the first Streamlit command)
+# 1. Page Config
 st.set_page_config(page_title="Personal Portfolio", page_icon="📄")
 
-# Wallpaper URL & Full-Screen CSS Injection with Frosted Glass Container
-# Define your two wallpapers
+# Wallpaper URLs
 desktop_wallpaper_url = "https://i.pinimg.com/736x/22/b2/a5/22b2a517f6b2953cefe9a1e9d6f0f8e8.jpg"
 mobile_wallpaper_url = "https://i.pinimg.com/1200x/6d/be/ae/6dbeae2d7f877e9b22b0e1d204037235.jpg" 
 
-# Injecting CSS with Media Queries
+# CSS with Desktop/Mobile Breakpoints
 page_bg_img = f"""
 <style>
-/* 1. Default (Desktop) Full-screen wallpaper */
+/* ========================================================= */
+/* 1. DESKTOP STYLING (min-width: 769px) */
+/* ========================================================= */
 [data-testid="stAppViewContainer"] {{
     background-image: url("{desktop_wallpaper_url}") !important;
     background-size: cover !important;
@@ -24,71 +25,98 @@ page_bg_img = f"""
     background-attachment: fixed !important; 
 }}
 
-/* 2. Mobile-Specific Wallpaper Override */
-@media screen and (max-width: 768px) {{
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("{mobile_wallpaper_url}") !important;
-        /* Removing 'fixed' on mobile prevents the wallpaper from disappearing on iOS Safari */
-        background-attachment: scroll !important; 
-        background-position: top center !important;
+/* Glassy Sidebar Styling */
+[data-testid="stSidebar"] {{
+    background-color: rgba(18, 18, 18, 0.45) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}}
+
+/* Inner sidebar container background cleanup */
+[data-testid="stSidebar"] > div:first-child {{
+    background: transparent !important;
+}}
+
+/* Centered & Max-Width Card for Desktop PC */
+@media screen and (min-width: 769px) {{
+    [data-testid="stAppViewBlockContainer"] {{
+        max-width: 800px !important;
+        margin: 2rem auto !important;
+        padding: 2.5rem !important;
+        background-color: rgba(18, 18, 18, 0.85) !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
     }}
 }}
 
-/* 3. Transparent Header & Bottom Elements */
 [data-testid="stHeader"], [data-testid="stBottom"] > div {{
     background-color: transparent !important;
 }}
 
-/* 4. Performance container */
-[data-testid="stAppViewBlockContainer"] {{
-    background-color: rgba(18, 18, 18, 0.85) !important;
-    border-radius: 16px !important;
-    padding: 1.5rem !important;
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-}}
-
-/* 5. Chat Bubbles optimization */
+/* Chat Bubbles */
 [data-testid="stChatMessage"] {{
     background-color: rgba(30, 30, 30, 0.75) !important;
     border-radius: 12px !important;
-    padding: 0.8rem !important;
+    padding: 0.8rem 1rem !important;
     margin-bottom: 0.75rem !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }}
 
-/* 6. Direct typography styling */
+/* Typography & Interactive Elements */
 .stMarkdown, p, h1, h2, h3, h4, span, label {{
     color: #FFFFFF !important;
 }}
 
-/* 7. Buttons */
 button {{
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     background-color: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 8px !important;
 }}
 
-/* Responsive Sidebar Adjustment */
-[data-testid="stSidebar"] {{
-    min-width: 200px !important;
-    max-width: 200px !important;
-    width: 200px !important;
-}}
-
+/* Sidebar Elements */
 [data-testid="stSidebar"] img {{
     max-width: 100% !important;
     height: auto !important;
+}}
+
+/* ========================================================= */
+/* 2. MOBILE STYLING (max-width: 768px) */
+/* ========================================================= */
+@media screen and (max-width: 768px) {{
+    [data-testid="stAppViewContainer"] {{
+        background-image: url("{mobile_wallpaper_url}") !important;
+        background-attachment: scroll !important; 
+        background-position: top center !important;
+    }}
+
+    [data-testid="stAppViewBlockContainer"] {{
+        padding: 1rem 0.8rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        background-color: rgba(18, 18, 18, 0.88) !important;
+        border-radius: 12px !important;
+    }}
+
+    [data-testid="stChatMessage"] {{
+        padding: 0.6rem 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }}
+
+    h3 {{
+        font-size: 1.2rem !important;
+    }}
+    p, span, label {{
+        font-size: 0.9rem !important;
+    }}
 }}
 </style>
 """
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-st.markdown(page_bg_img, unsafe_allow_html=True)
 
-
-# 2. Caching the API Client
+# API & Data Caching
 @st.cache_resource
 def get_groq_client():
     load_dotenv()
@@ -98,8 +126,6 @@ def get_groq_client():
         st.stop()
     return Groq(api_key=api_key)
 
-
-# 3. Caching the Profile Data & Adding Error Handling
 @st.cache_data
 def load_profile():
     profile_path = Path("about_me.md")
@@ -107,49 +133,19 @@ def load_profile():
         return profile_path.read_text()
     return "Profile information is currently unavailable."
 
-
 client = get_groq_client()
 profile = load_profile()
 model = "llama-3.3-70b-versatile"
 
-# 4. Hardened System Prompt
 system_prompt = f"""
 You are an AI personal portfolio assistant.
-
-Your job is to represent the user professionally and answer questions about their:
-- technical skills
-- projects
-- education
-- programming experience
-- learning journey
-- achievements
-- career goals
-
-Use only the information provided in the profile context below.
-
-Rules:
-1. Do not invent skills, projects, achievements, or experience that are not mentioned.
-2. If information is unavailable, clearly say that you do not have that information.
-3. Explain technical concepts in a recruiter-friendly way.
-4. Highlight engineering decisions, technologies used, and problems solved.
-5. Be honest about current skill levels. Do not exaggerate expertise.
-6. When discussing projects, explain:
-   - What problem the project solves
-   - Technologies used
-   - Technical concepts involved
-   - What was learned from building it
-7. Keep responses concise, professional, and conversational.
-8. UNDER NO CIRCUMSTANCES should you answer questions unrelated to the portfolio context.
-
-Profile Context:
+Represent the user professionally using only the context below:
 {profile}
 """
 
 with st.sidebar:
     st.image("profile.png", use_container_width=True)
-
     st.title("Rajat Tyagi")
-
     st.download_button(
         label="Download Resume",
         data="Your actual resume content or read from a file",
@@ -157,93 +153,75 @@ with st.sidebar:
         mime="application/pdf",
         use_container_width=True,
     )
-
     st.divider()
-
     st.subheader("Projects")
-    st.link_button(
-        "📄 Resume Analyser", "https://github.com/rajatt1616/Resume-Analyser"
-    )
-    st.link_button(
-        "🤖 AI Portfolio Assistant",
-        "https://github.com/rajatt1616/portfolio-ai",
-    )
-    st.link_button("🃏 UNO Game Engine", "https://github.com/rajatt1616/better-uno")
-
+    st.link_button("📄 Resume Analyser", "https://github.com/rajatt1616/Resume-Analyser", use_container_width=True)
+    st.link_button("🔗 AI Portfolio ", "https://github.com/rajatt1616/Resume-Analyser", use_container_width=True)
+    st.link_button("🃏 UNO Game Engine", "https://github.com/rajatt1616/better-uno", use_container_width=True)
     st.divider()
-
     st.subheader("Profiles")
-    st.link_button("Leetcode", "https://leetcode.com/u/rajatt1616/")
-    st.link_button("GitHub", "https://github.com/rajatt1616")
+    st.link_button("Leetcode", "https://leetcode.com/u/rajatt1616/", use_container_width=True)
+    st.link_button("GitHub", "https://github.com/rajatt1616", use_container_width=True)
 
-# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- FIXED TOP SECTION (Welcome Header & Suggestion Buttons) ---
-with st.container():
+# --- MAIN CARD CONTAINER (GROUPS HEADER & EXPANDER TOGETHER) ---
+main_container = st.container()
+
+with main_container:
     st.markdown("### 👋 Welcome to my AI Portfolio")
-    st.markdown(
-        "I'm Rajat, a developer specializing in Python, C++, and AI integrations. "
-        "Feel free to ask my AI assistant anything about my background, or click a suggestion below!"
-    )
-    st.subheader("Ask me anything")
+    st.markdown("I'm Rajat, a developer specializing in Python, C++, and AI integrations.")
 
-    questions = [
-        "Tell me about yourself",
-        "What projects have you built?",
-        "What technologies do you know?",
-        "Explain the Resume Analyser project",
-        "What are you currently learning?",
-        "What are your career goals?",
-    ]
+    # Clean Collapsible Suggested Questions
+    with st.expander("💡 **Suggested Questions**", expanded=(len(st.session_state.messages) == 0)):
+        questions = [
+            "Tell me about yourself",
+            "What projects have you built?",
+            "What technologies do you know?",
+            "Explain the Resume Analyser project",
+            "What are you currently learning?",
+            "What are your career goals?",
+        ]
+        cols = st.columns(2)
+        for index, question in enumerate(questions):
+            if cols[index % 2].button(question, key=f"btn_{index}", use_container_width=True):
+                st.session_state.messages.append({"role": "user", "content": question})
+                st.rerun()
 
-    cols = st.columns(2)
-    for index, question in enumerate(questions):
-        if cols[index % 2].button(question, key=f"btn_{index}"):
-            st.session_state.messages.append({"role": "user", "content": question})
-            st.rerun()
+    st.divider()
 
-st.divider()
+    # --- CHAT HISTORY ---
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
 
-# --- DISPLAY HISTORICAL MESSAGES BELOW SUGGESTIONS ---
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
-
-# --- CHAT INPUT & RESPONSE HANDLING ---
+# --- CHAT INPUT & RESPONSE ---
 prompt = st.chat_input("Ask something about my experience...")
 
-# Process prompt if typed into input box OR clicked via suggestion button
 if prompt or (st.session_state.messages and st.session_state.messages[-1]["role"] == "user" and len(st.session_state.messages) % 2 != 0):
-
-    # If the prompt came directly from user text input
     if prompt:
         with st.chat_message("user"):
             st.write(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Stream AI Response
     try:
         response = client.chat.completions.create(
             model=model,
-            messages=[{"role": "system", "content": system_prompt}]
-            + st.session_state.messages,
+            messages=[{"role": "system", "content": system_prompt}] + st.session_state.messages,
             stream=True,
         )
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             answer = ""
-
             for chunk in response:
                 if chunk.choices[0].delta.content:
                     answer += chunk.choices[0].delta.content
                     message_placeholder.markdown(answer + "▌")
-
             message_placeholder.markdown(answer)
 
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
     except Exception as e:
-        st.error(f"An error occurred while connecting to the AI: {e}")
+        st.error(f"Error: {e}")
