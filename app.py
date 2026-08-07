@@ -8,77 +8,82 @@ import streamlit as st
 st.set_page_config(page_title="Personal Portfolio", page_icon="📄")
 
 # Wallpaper URL & Full-Screen CSS Injection with Frosted Glass Container
-wallpaper_url = "https://i.pinimg.com/736x/22/b2/a5/22b2a517f6b2953cefe9a1e9d6f0f8e8.jpg"
+# Define your two wallpapers
+desktop_wallpaper_url = "https://i.pinimg.com/736x/22/b2/a5/22b2a517f6b2953cefe9a1e9d6f0f8e8.jpg"
+mobile_wallpaper_url = "https://i.pinimg.com/736x/b8/26/f7/b826f7002fecc580c8d9e9c0e5d183b6.jpg" 
 
+# Injecting CSS with Media Queries
 page_bg_img = f"""
 <style>
-/* 1. Full-screen background wallpaper */
+/* 1. Default (Desktop) Full-screen wallpaper */
 [data-testid="stAppViewContainer"] {{
-    background-image: url("{wallpaper_url}") !important;
+    background-image: url("{desktop_wallpaper_url}") !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
+    background-attachment: fixed !important; 
 }}
 
-/* 2. Make top header and bottom chat input fully transparent */
-[data-testid="stHeader"] {{
-    background-color: transparent !important;
+/* 2. Mobile-Specific Wallpaper Override */
+@media screen and (max-width: 768px) {{
+    [data-testid="stAppViewContainer"] {{
+        background-image: url("{mobile_wallpaper_url}") !important;
+        /* Removing 'fixed' on mobile prevents the wallpaper from disappearing on iOS Safari */
+        background-attachment: scroll !important; 
+        background-position: top center !important;
+    }}
 }}
-[data-testid="stBottom"] > div {{
+
+/* 3. Transparent Header & Bottom Elements */
+[data-testid="stHeader"], [data-testid="stBottom"] > div {{
     background-color: transparent !important;
 }}
 
-/* 3. Global frosted glass container for the main view */
+/* 4. Performance container */
 [data-testid="stAppViewBlockContainer"] {{
-    background-color: rgba(0, 0, 0, 0.45) !important;
-    backdrop-filter: blur(12px) -webkit-backdrop-filter: blur(12px) !important;
+    background-color: rgba(18, 18, 18, 0.85) !important;
     border-radius: 16px !important;
-    padding: 2.5rem !important;
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
+    padding: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}}
+
+/* 5. Chat Bubbles optimization */
+[data-testid="stChatMessage"] {{
+    background-color: rgba(30, 30, 30, 0.75) !important;
+    border-radius: 12px !important;
+    padding: 0.8rem !important;
+    margin-bottom: 0.75rem !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }}
 
-/* 4. Frosted glass effect specifically for chat message bubbles */
-[data-testid="stChatMessage"] {{
-    background-color: rgba(0, 0, 0, 0.55) !important;
-    backdrop-filter: blur(10px) -webkit-backdrop-filter: blur(10px) !important;
-    border-radius: 12px !important;
-    padding: 1rem !important;
-    margin-bottom: 0.75rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-}}
-
-/* 5. Pure white text with crisp shadow */
-h1, h2, h3, h4, h5, h6, p, span, label, div {{
+/* 6. Direct typography styling */
+.stMarkdown, p, h1, h2, h3, h4, span, label {{
     color: #FFFFFF !important;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
 }}
 
-/* 6. Styled input boxes and buttons */
+/* 7. Buttons */
 button {{
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     background-color: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(8px) -webkit-backdrop-filter: blur(8px) !important;
 }}
 
-/* Reduce Sidebar Width */
+/* Responsive Sidebar Adjustment */
 [data-testid="stSidebar"] {{
     min-width: 200px !important;
     max-width: 200px !important;
     width: 200px !important;
 }}
 
-/* Ensure images inside sidebar resize cleanly to fit */
 [data-testid="stSidebar"] img {{
     max-width: 100% !important;
     height: auto !important;
 }}
-
-
 </style>
 """
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
