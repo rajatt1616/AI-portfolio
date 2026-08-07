@@ -303,7 +303,7 @@ Description:
 
 An LLM-powered personal assistant that represents Rajat and answers questions about his technical background, projects, skills, education, and achievements.
 
-GITHUB:
+GITHUB REPOSITORY:
 https://github.com/rajatt1616/AI-protfolio
 
 ## Goal
