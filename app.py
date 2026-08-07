@@ -10,7 +10,7 @@ st.set_page_config(page_title="Personal Portfolio", page_icon="📄")
 # Wallpaper URL & Full-Screen CSS Injection with Frosted Glass Container
 # Define your two wallpapers
 desktop_wallpaper_url = "https://i.pinimg.com/736x/22/b2/a5/22b2a517f6b2953cefe9a1e9d6f0f8e8.jpg"
-mobile_wallpaper_url = "https://i.pinimg.com/736x/dd/cd/97/ddcd97129f14cb44ffb61be7aa5eab90.jpg" 
+mobile_wallpaper_url = "https://i.pinimg.com/1200x/6d/be/ae/6dbeae2d7f877e9b22b0e1d204037235.jpg" 
 
 # Injecting CSS with Media Queries
 page_bg_img = f"""
