@@ -7,12 +7,11 @@ import streamlit as st
 # 1. Page Config (Must be the first Streamlit command)
 st.set_page_config(page_title="Personal Portfolio", page_icon="📄")
 
-# Wallpaper URL & Full-Screen CSS Injection with Frosted Glass Container
-# Define your two wallpapers
+# Wallpaper URLs
 desktop_wallpaper_url = "https://i.pinimg.com/736x/22/b2/a5/22b2a517f6b2953cefe9a1e9d6f0f8e8.jpg"
 mobile_wallpaper_url = "https://i.pinimg.com/originals/d0/84/31/d084311d34a818a92d99f0faadd02852.png" 
 
-# Injecting CSS with Media Queries
+# Injecting CSS with Media Queries & Streamlit Chrome Hiding
 page_bg_img = f"""
 <style>
 /* 1. Default (Desktop) Full-screen wallpaper */
@@ -28,14 +27,40 @@ page_bg_img = f"""
 @media screen and (max-width: 768px) {{
     [data-testid="stAppViewContainer"] {{
         background-image: url("{mobile_wallpaper_url}") !important;
-        /* Removing 'fixed' on mobile prevents the wallpaper from disappearing on iOS Safari */
         background-attachment: scroll !important; 
         background-position: top center !important;
     }}
 }}
 
-/* 3. Transparent Header & Bottom Elements */
-[data-testid="stHeader"], [data-testid="stBottom"] > div {{
+/* 3. Hide Streamlit Chrome (Header, Menu, Manage App Button, Footer) */
+header[data-testid="stHeader"] {{
+    visibility: hidden !important;
+    height: 0px !important;
+}}
+
+#MainMenu {{
+    visibility: hidden !important;
+}}
+
+footer {{
+    visibility: hidden !important;
+    display: none !important;
+}}
+
+[data-testid="stDecoration"] {{
+    display: none !important;
+}}
+
+/* Target viewer/management badge specifically on Streamlit Community Cloud */
+.stAppDeployButton,
+[data-testid="manage-app-button"],
+div[data-testid="stStatusWidget"] {{
+    display: none !important;
+    visibility: hidden !important;
+}}
+
+/* Transparent Bottom Elements */
+[data-testid="stBottom"] > div {{
     background-color: transparent !important;
 }}
 
@@ -82,8 +107,6 @@ button {{
 }}
 </style>
 """
-
-st.markdown(page_bg_img, unsafe_allow_html=True)
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
