@@ -2,7 +2,7 @@
 
 An interactive, responsive AI portfolio assistant powered by **Streamlit**, **Groq API**, and **Llama 3.3**.
 
-🚀 **[Try the Live App Here](https://rajat-portfolio.streamlit.app/)**
+🚀 [Try the Live App Here](https://rajat-portfolio.streamlit.app/)
 
 ---
 
@@ -25,7 +25,18 @@ To run this project on your machine:
 
 1. **Clone & Install:**
    ```bash
-   git clone [https://github.com/rajatt1616/AI-Portfolio.git](https://github.com/rajatt1616/AI-Portfolio.git)
+   git clone https://github.com/rajatt1616/AI-Portfolio.git
    cd AI-Portfolio
    pip install -r requirements.txt
+
+
+2. Add API Key: Create a .env file in the root directory:
+
+   ```bash
+   GROQ_API_KEY="your_groq_api_key"
+
+3. Launch App:
+
+```bash
+streamlit run app.py
 
