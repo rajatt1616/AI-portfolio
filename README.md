@@ -38,5 +38,5 @@ To run this project on your machine:
 3. Launch App:
 
 ```bash
-streamlit run app.py
+   streamlit run app.py
 
