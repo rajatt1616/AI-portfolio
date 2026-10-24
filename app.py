@@ -148,7 +148,7 @@ with st.sidebar:
     st.title("Rajat Tyagi")
     st.download_button(
         label="Download Resume",
-        data="Your actual resume content or read from a file",
+        data=Path("resume.pdf").read_bytes(),
         file_name="Rajat_Tyagi_Resume.pdf",
         mime="application/pdf",
         use_container_width=True,
