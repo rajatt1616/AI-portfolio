@@ -135,7 +135,7 @@ def load_profile():
 
 client = get_groq_client()
 profile = load_profile()
-model = "openai/gpt-oss-20b"
+model = "llama-3.3-70b-versatile"
 
 system_prompt = f"""
 You are an AI personal portfolio assistant.
